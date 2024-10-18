@@ -8,7 +8,7 @@ import sqlite3
 
 edit_user_router = Router()
 
-@edit_user_router.message(Command("editUsername"))
+@edit_user_router.message(Command("edit_username"))
 async def edit_first_name(message: types.Message, state:FSMContext): 
     await state.set_state(EditUserStates.username)
     await message.answer("Хотите исправить Ваше имя? Введите пожалуйста Ваше имя:")

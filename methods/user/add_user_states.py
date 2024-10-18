@@ -5,3 +5,6 @@ class AddUserStates(StatesGroup):
 
 class EditUserStates(StatesGroup):
     username = State()
+
+class DeleteUserStates(StatesGroup):
+    delete_command = State()

@@ -18,8 +18,11 @@ async def delete_ticker_start(message: types.Message, state:FSMContext):
 @delete_ticker_from_database_router.message(DeleteTickerState.ticker)
 async def delete_ticker_finish(message: types.Message, state: FSMContext):
     await state.update_data(ticker=message.text)
-    data = await state.get_data()    
+    data = await state.get_data()        
     ticker = data['ticker']
     await state.clear()
-    msg = delete_ticker_from_database(ticker, message.from_user.id)
-    await message.answer(msg)
+    if (ticker == 'Да'):    
+        msg = delete_ticker_from_database(ticker, message.from_user.id)
+        await message.answer(msg)
+    else:
+        await message.answer("Решили не удалять данный тикер? Хорошо, пока оставим всё как есть.")

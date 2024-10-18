@@ -41,9 +41,9 @@ router.include_routers(user_register_router,
                        save_ruble_position_router,
                        display_portfolio_router,
                        news_scraping_router,
-                    #    delete_ticker_from_database_router,
-                    #    delete_ruble_position_router,
-                    #    delete_user_router
+                       delete_ticker_from_database_router,
+                       delete_ruble_position_router,
+                       delete_user_router
                        )
 
 dp.include_routers(router)
