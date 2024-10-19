@@ -58,7 +58,7 @@ def bond_position_info(user_position_info:tuple, ticker_info_from_server:tuple) 
     total_position_value_percent_change = round((total_current_value - total_purchase_value) / total_purchase_value * 100, 2)
     coupon_size = ticker_info_from_server[7]
     coupon_period = ticker_info_from_server[9]
-    coupons_left_per_bond = coupon_size * coupon_period * years_diff
+    coupons_left_per_bond = coupon_size * round(365/coupon_period, 0) * years_diff
     coupons_left_per_position = coupons_left_per_bond * purchase_amount
 
     output_dict[bond_columns[0]] = ticker
