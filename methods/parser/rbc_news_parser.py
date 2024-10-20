@@ -55,8 +55,8 @@ def rbc_news_parser():
         conn.commit()
         # conn.close()
 
-        conn = sqlite3.connect(db_directory)
-        cursor = conn.cursor()
+        # conn = sqlite3.connect(db_directory)
+        # cursor = conn.cursor()
 
         # article_ids = cursor.execute(f'SELECT id, image FROM rbc_news').fetchall()
         # conn.commit()
