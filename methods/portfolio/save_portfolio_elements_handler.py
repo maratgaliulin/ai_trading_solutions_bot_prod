@@ -26,11 +26,11 @@ async def save_portfolio_element_end(message: types.Message, state:FSMContext):
         await state.update_data(portfolio_info=message.text)
         data_raw = await state.get_data()
         await state.clear()
+        data = data_raw['portfolio_info']
+        data_list = split_input_info(data)
 
-        if (data_raw is None):
+        if (data_list is None):
             await message.answer("К сожалению, я не смог найти информацию с указанным тикером, либо данные были введены неверно.")    
-        else:            
-            data = data_raw['portfolio_info']
-            data_list = split_input_info(data)
+        else:
             data_message = save_to_portfolio(data_list, message.from_user.id)
             await message.answer(data_message)
