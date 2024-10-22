@@ -2,7 +2,11 @@ import sqlite3
 import unittest
 import requests_mock as mock
 import requests
+from urllib.request import urlopen
+from bs4 import BeautifulSoup
 import main as bot
+from datetime import datetime
+import html
 from methods.user.user_class import User
 from methods.components.check_currency import check_currency
 from methods.components.split_input_info import split_input_info
@@ -14,6 +18,12 @@ from methods.components.check_stock_ticker_full import check_stock_ticker_full
 from methods.components.check_stock_ticker import check_stock_ticker
 from methods.components.make_currency_list_full import make_currency_list_full
 from methods.parser.rbc_news_parser import rbc_news_parser
+from methods.parser.save_single_article import save_single_article
+from methods.parser.mock_html_page import mock_html_str
+
+
+unittest_db_directory = './database/unittest_database.db'
+db_dir_for_parser = './database/our_database.db'
 
 
 # ПРИ ПОПЫТКАХ ЗАМОКИВАНИЯ ОТВЕТА ОТ API СТОЛКНУЛСЯ С СЛЕДУЮЩИМИ ПРОБЛЕМАМИ:
@@ -33,10 +43,52 @@ def check_currency_local(ticker:str):  # метод с одним URL, нужн�
     else: return None, None
 
 
+def mini_parser(url):
+
+    resp = requests.get(url)
+    parser = 'lxml'
+
+    bs = BeautifulSoup(resp.text, parser)    
+    article_dict = {}
+    article_title_class = 'article__header__title-in'
+    article_overview_class = 'article__text__overview'
+    article_image_class = 'article__main-image__image'
+
+
+    article_title = bs.find_all('h1', {'class': article_title_class})
+    article_overview = bs.find_all('div', {'class': article_overview_class})
+    article_image = bs.find_all('img', {'class': article_image_class})
+
+    dt_format = '%Y-%m-%d'
+    today = datetime.now().strftime(format=dt_format)
+
+    article_dict['title'] = article_title
+    article_dict['overview'] = article_overview
+    article_dict['link'] = url
+    article_dict['created_at'] = today
+    article_dict['image_url'] = article_image
+
+    conn = sqlite3.connect(unittest_db_directory)
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM rbc_news")
+    conn.commit()
+        
+    cursor.execute(f"INSERT INTO rbc_news (id, title, overview, link, created_at, image) VALUES (1, '{article_dict['title']}', '{article_dict['overview']}', '{article_dict['link']}', '{article_dict['created_at']}', '{article_dict['image_url']}')")
+    conn.commit()
+       
+    conn.close()
+
+    print('It is done!')
+
+
+
+
 # ПО КАКОЙ-ТО ПРИЧИНЕ У МЕНЯ НЕ ОПРЕДЕЛЯЮТСЯ МЕТОДЫ И КЛАСС USER ПРИ ПОПЫТКЕ ИХ ИМПОРТА ИЗ МЕТОДА MAIN, ПОЭТОМУ ПРИШЛОСЬ ИХ 
 # ИМПОРТИРОВАТЬ ФИЗИЧЕСКИ ИЗ СООТВЕТСТВУЮЩИХ ДИРЕКТОРИЙ (СТРОКИ 5-14)
 
 test_request_share_url = "https://iss.moex.com/iss/engines/stock/markets/shares/securities/VTBR.json"  # URL для замокивания
+test_parser_url = 'https://www.rbc.ru/quote'
+
 
 # Ложные ответы "сервера":
 
@@ -118,10 +170,6 @@ test_response_bond_isin = {
 		["RU000A101QE0"],
 		["RU000A1028E3"]
     ]}}
-
-
-unittest_db_directory = './database/unittest_database.db'
-db_dir_for_parser = './database/our_database.db'
 
 # Проверка основных методов кода
 
@@ -295,24 +343,21 @@ class SavePortfolioTestCase(unittest.TestCase):
         self.assertEqual(incorrect_data_message, 'Что-то пошло не так, данные сохранить не удалось.')
         self.assertEqual(incorrect_split_message, 'Ошибка типа введенных данных.')
 
+
 class ParserTestCase(unittest.TestCase):
-    db_directory = db_dir_for_parser
-
-    def setUp(self):
-        rbc_news_parser()
-        conn = sqlite3.connect(self.db_directory)
-        cursor = conn.cursor()
-        cursor.execute(f"SELECT * FROM rbc_news")
-        result = cursor.fetchone()
-        print('fetch_news_true_false', (result is not None))          
-        conn.close()  
-
-    def tearDown(self):
-        return super().tearDown() 
 
     def test_check_news_in_database(self):
-        rbc_news_parser()
-        conn = sqlite3.connect(self.db_directory)
+
+        mock_response = {
+            "status_code": 200,
+            "text": mock_html_str
+        }
+
+        with mock.Mocker() as mock_get:
+            mock_get.get(test_parser_url, json=mock_response)
+            mini_parser(test_parser_url)
+
+        conn = sqlite3.connect(unittest_db_directory)
         cursor = conn.cursor()
         cursor.execute(f"SELECT * FROM rbc_news")
         result = cursor.fetchone()
