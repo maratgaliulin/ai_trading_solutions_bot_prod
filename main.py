@@ -1,5 +1,6 @@
 from config import *
-
+import os
+from dotenv import load_dotenv
 from methods.components.commands import commands
 from methods.user.register_user_handler import user_register_router
 from methods.user.edit_user_handler import edit_user_router
@@ -19,6 +20,10 @@ import asyncio
 import logging
 from aiogram import Bot, Dispatcher, Router
 from aiogram.fsm.storage.memory import MemoryStorage
+
+load_dotenv()
+
+bot_token = os.getenv('API_TOKEN')
 
 logging.basicConfig(level=logging.INFO)
 

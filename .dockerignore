@@ -2,8 +2,8 @@
 /valera_bot
 /database
 /__pycache__
+/docker
 
-config.py
 credentials.txt
 .env
 .gitignore
