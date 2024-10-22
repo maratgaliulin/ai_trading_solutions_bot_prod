@@ -2,9 +2,17 @@
 /valera_bot
 /database
 /__pycache__
+
 config.py
 credentials.txt
 .env
 .gitignore
 docs-aiogram-dev-en-latest.pdf
 test.ipynb
+
+/methods/anom_vol/.env
+/methods/anom_vol/config.py
+/methods/anom_vol/Dockerfile
+/methods/anom_vol/requirements.txt
+/methods/anom_vol/tinkoff.db
+/methods/anom_vol/__pycache__

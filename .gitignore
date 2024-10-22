@@ -1,6 +1,7 @@
 config.py
 credentials.txt
 docs-aiogram-dev-en-latest.pdf
+.dockerignore
 
 myenv/
 database/our_database.db
