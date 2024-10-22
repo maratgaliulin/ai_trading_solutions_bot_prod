@@ -1,0 +1,10 @@
+/myenv
+/valera_bot
+/database
+/__pycache__
+config.py
+credentials.txt
+.env
+.gitignore
+docs-aiogram-dev-en-latest.pdf
+test.ipynb
