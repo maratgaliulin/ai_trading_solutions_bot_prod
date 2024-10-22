@@ -2,9 +2,8 @@ import sqlite3
 import unittest
 import requests_mock as mock
 import requests
-from urllib.request import urlopen
 from bs4 import BeautifulSoup
-import main as bot
+import unicodedata
 from datetime import datetime
 import html
 from methods.user.user_class import User
@@ -21,20 +20,10 @@ from methods.parser.rbc_news_parser import rbc_news_parser
 from methods.parser.save_single_article import save_single_article
 from methods.parser.mock_html_page import mock_html_str
 
+mock_html_str = '<h1 class="article__header__title-in"> Mock Article Title </h1> <div class="article__text__overview"> Mock Article Description </div>'
 
 unittest_db_directory = './database/unittest_database.db'
 db_dir_for_parser = './database/our_database.db'
-
-
-# ПРИ ПОПЫТКАХ ЗАМОКИВАНИЯ ОТВЕТА ОТ API СТОЛКНУЛСЯ С СЛЕДУЮЩИМИ ПРОБЛЕМАМИ:
-
-# 1) БИБЛИОТЕКА MOCK ВОЗВРАЩАЕТ ОБЪЕКТ Mock(), А МНЕ ДЛЯ ПРАВИЛЬНОЙ РАБОТЫ МЕТОДА БЫЛ НУЖЕН ОБЪЕКТ RESPONSE, У КОТОРОГО ЕСТЬ СВОЙСТВО TEXT (У MOCK НЕТ АТТРИБУТА, АНАЛОГИЧНОГО RESPONSE.TEXT)
-#     -  ЕСЛИ ПОДГОНЯТЬ МЕТОД ПОД БИБЛИОТЕКУ MOCK, ТО ПРИДЁТСЯ ПРОВОДИТЬ ДОСТАТОЧНО МНОГО РЕФАКТОРИНГА, ПЕРЕДЕЛЫВАТЬ ПРАКТИЧЕСКИ ВСЮ ЛОГИКУ
-#     -  ПОЭТОМУ Я РЕШИЛ СМЕНИТЬ БИБЛИОТЕКУ MOCK НА REQUESTS_MOCK (НАДЕЮСЬ ЗА ЭТО БАЛЛ НЕ БУДЕТ СНИЖЕН)
-
-# 2) У МЕНЯ В МЕТОДЕ check_currency ФИГУРИРУЕТ НЕСКОЛЬКО URL-ЗАПРОСОВ, ПОЭТОМУ REQUESTS_MOCK ВЫДАЕТ ОШИБКУ requests_mock.exceptions.NoMockAddress: No mock address
-#     -  С ЦЕЛЬЮ ПРЕОДОЛЕНИЯ ЭТОЙ ОШИБКИ Я НАПИСАЛ МИНИ-МЕТОД check_currency_local, В КОТОРОМ ЕСТЬ ССЫЛКА ТОЛЬКО НА ОДИН URL (С КОТОРОГО Я БЕРУ ИНФОРМАЦИЮ ПО АКЦИЯМ)
-#     -  ДРУГИЕ МЕТОДЫ БЕРУТ ДАННЫЕ ИЗ ФАКТИЧЕСКИХ URL, ЕСЛИ НУЖНО ИХ ВСЕ ЗАМОКАТЬ, ОТПРАВЬТЕ ПОЖАЛУЙСТА МОЮ РАБОТУ НА ДОРАБОТКУ, Я ИХ ЗАМОКАЮ
 
 def check_currency_local(ticker:str):  # метод с одним URL, нужный для замокивания информации об акции ВТБ
     stock_price = check_stock_ticker(ticker)
@@ -46,18 +35,20 @@ def check_currency_local(ticker:str):  # метод с одним URL, нужн�
 def mini_parser(url):
 
     resp = requests.get(url)
+    resp.encoding = 'utf-8'
     parser = 'lxml'
 
-    bs = BeautifulSoup(resp.text, parser)    
+    bs = BeautifulSoup(markup=resp.text, features=parser)
+
     article_dict = {}
-    article_title_class = 'article__header__title-in'
-    article_overview_class = 'article__text__overview'
-    article_image_class = 'article__main-image__image'
 
 
-    article_title = bs.find_all('h1', {'class': article_title_class})
-    article_overview = bs.find_all('div', {'class': article_overview_class})
-    article_image = bs.find_all('img', {'class': article_image_class})
+    article_title = bs.h1.contents[0]
+    article_overview = bs.div.contents[0]
+
+    
+
+    print('article_title', unicodedata.normalize('NFD', article_overview))
 
     dt_format = '%Y-%m-%d'
     today = datetime.now().strftime(format=dt_format)
@@ -66,7 +57,7 @@ def mini_parser(url):
     article_dict['overview'] = article_overview
     article_dict['link'] = url
     article_dict['created_at'] = today
-    article_dict['image_url'] = article_image
+    article_dict['image_url'] = ""
 
     conn = sqlite3.connect(unittest_db_directory)
     cursor = conn.cursor()
@@ -78,13 +69,8 @@ def mini_parser(url):
        
     conn.close()
 
-    print('It is done!')
+    print('Mini-parser has finished working')
 
-
-
-
-# ПО КАКОЙ-ТО ПРИЧИНЕ У МЕНЯ НЕ ОПРЕДЕЛЯЮТСЯ МЕТОДЫ И КЛАСС USER ПРИ ПОПЫТКЕ ИХ ИМПОРТА ИЗ МЕТОДА MAIN, ПОЭТОМУ ПРИШЛОСЬ ИХ 
-# ИМПОРТИРОВАТЬ ФИЗИЧЕСКИ ИЗ СООТВЕТСТВУЮЩИХ ДИРЕКТОРИЙ (СТРОКИ 5-14)
 
 test_request_share_url = "https://iss.moex.com/iss/engines/stock/markets/shares/securities/VTBR.json"  # URL для замокивания
 test_parser_url = 'https://www.rbc.ru/quote'
