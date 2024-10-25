@@ -4,7 +4,6 @@ docs-aiogram-dev-en-latest.pdf
 .env
 
 myenv/
-database/our_database.db
 valera_bot/
 methods/anom_vol/
 docker/
