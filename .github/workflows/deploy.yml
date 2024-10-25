@@ -33,7 +33,6 @@ jobs:
         with:
           host: ${{ secrets.HOST }} 
           username: ${{ secrets.USER }} 
-          password: ${{ secrets.SERVER_PASSWORD }} 
           key: ${{ secrets.SSH_KEY }} 
           script: |
             sudo docker stop main_container 
@@ -41,4 +40,3 @@ jobs:
             sudo docker pull mgaliulin/ai_trading_solutions_bot:latest
             sudo docker pull mgaliulin/news_parser:latest
             sudo docker run -e API_TOKEN='7692833138:AAHfvkUvbEIHEH-YCKKY7dZeDoGWTOBTPx4' -v /root/database:/app/database mgaliulin/ai_trading_solutions_bot
-            sudo docker run -v /root/database:/app/database mgaliulin/news_parser
