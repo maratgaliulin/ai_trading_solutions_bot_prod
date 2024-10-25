@@ -16,6 +16,8 @@ from methods.components.check_stock_ticker_full import check_stock_ticker_full
 from methods.components.check_stock_ticker import check_stock_ticker
 from methods.components.make_currency_list_full import make_currency_list_full
 
+
+
 mock_html_str = '<h1 class="article__header__title-in"> Mock Article Title </h1> <div class="article__text__overview"> Mock Article Description </div>'
 
 unittest_db_directory = './database/unittest_database.db'
