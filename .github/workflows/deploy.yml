@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest 
     steps: 
     - name: Check out the repo 
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
     - name: Set up Docker Buildx 
       uses: docker/setup-buildx-action@v1 
     - name: Login to Docker 
@@ -32,7 +32,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }} 
-          # username: ${{ secrets.USER }} 
+          username: ${{ secrets.USER }} 
           key: ${{ secrets.SSH_KEY }} 
           script: |
             sudo docker stop main_container 
