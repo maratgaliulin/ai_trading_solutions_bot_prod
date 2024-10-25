@@ -2,4 +2,4 @@
 
 ##### Investor's assistant TG-bot
 
-some less changes
+even more changes
