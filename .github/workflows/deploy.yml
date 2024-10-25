@@ -36,7 +36,7 @@ jobs:
           username: ${{ secrets.USER }} 
           key: ${{ secrets.SSH_KEY }} 
           script: |
-            sudo docker stop main_container 
+            sudo docker ps -q --filter ancestor=mgaliulin/ai_trading_solutions_bot | xargs docker stop 
             sudo docker system prune -a -f
             sudo docker pull mgaliulin/ai_trading_solutions_bot:latest
             sudo docker pull mgaliulin/news_parser:latest
