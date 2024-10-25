@@ -3,4 +3,4 @@
 ##### Investor's assistant TG-bot
 
 
-some more tiny changes
+some more big changes
