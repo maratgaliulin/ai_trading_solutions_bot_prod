@@ -2,4 +2,4 @@
 
 ##### Investor's assistant TG-bot
 
-even more changes sdfgsdfg
+some more changes for test
