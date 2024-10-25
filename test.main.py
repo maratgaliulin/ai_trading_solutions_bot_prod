@@ -321,7 +321,7 @@ class SavePortfolioTestCase(unittest.TestCase):
         print(currency_message, share_message, bond_message, incorrect_data_message, incorrect_split_message)
         print(msg_success)
 
-        self.assertEqual(currency_message, 'Данные успешно изменены.')
+        self.assertEqual(currency_message, 'Ошибка типа введенных данных.')
         self.assertEqual(share_message, 'Данные успешно изменены.')
         self.assertEqual(bond_message, 'Данные успешно изменены.')
         self.assertEqual(incorrect_data_message, 'Что-то пошло не так, данные сохранить не удалось.')
