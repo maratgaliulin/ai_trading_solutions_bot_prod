@@ -5,7 +5,6 @@ import requests
 from bs4 import BeautifulSoup
 import unicodedata
 from datetime import datetime
-import html
 from methods.user.user_class import User
 from methods.components.check_currency import check_currency
 from methods.components.split_input_info import split_input_info
@@ -16,9 +15,6 @@ from methods.components.check_currency_in_the_list import check_currency_in_the_
 from methods.components.check_stock_ticker_full import check_stock_ticker_full
 from methods.components.check_stock_ticker import check_stock_ticker
 from methods.components.make_currency_list_full import make_currency_list_full
-from methods.parser.rbc_news_parser import rbc_news_parser
-from methods.parser.save_single_article import save_single_article
-from methods.parser.mock_html_page import mock_html_str
 
 mock_html_str = '<h1 class="article__header__title-in"> Mock Article Title </h1> <div class="article__text__overview"> Mock Article Description </div>'
 
