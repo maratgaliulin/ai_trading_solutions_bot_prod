@@ -39,4 +39,4 @@ jobs:
             sudo docker system prune -a -f
             sudo docker pull mgaliulin/ai_trading_solutions_bot:latest
             sudo docker pull mgaliulin/news_parser:latest
-            sudo docker run -e API_TOKEN='7692833138:AAHfvkUvbEIHEH-YCKKY7dZeDoGWTOBTPx4' -v /root/database:/app/database mgaliulin/ai_trading_solutions_bot
+            sudo docker run -e API_TOKEN=${{ secrets.API_TOKEN }} -v /root/database:/app/database mgaliulin/ai_trading_solutions_bot
